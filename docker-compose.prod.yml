@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    environment:
+      - STREAMLIT_PASSWORD=${STREAMLIT_PASSWORD}
+      - DISTOGID_DEMO=${DISTOGID_DEMO:-1}
+    volumes:
+      - data:/app/data
+    expose:
+      - "8501"
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+volumes:
+  data:
+  caddy_data:
+  caddy_config:
